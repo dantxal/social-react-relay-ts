@@ -17,18 +17,19 @@ export const CreatePost = graphql`
   }
 `;
 
-export type CreatePostConfigs = (title:string, text: string) => UseMutationConfig<CreatePostMutation>
+// export type CreatePostConfigs = (title:string, text: string) => UseMutationConfig<CreatePostMutation>
 
-export const createPostConfigs: CreatePostConfigs = 
-(title, text,) => (
-  {
-    variables: { title, text },
-    optimisticUpdater: (store, data) => {
-
-    },
-    updated:(store, data) => {
+// export const createPostConfigs: CreatePostConfigs = 
+// (title, text,) => (
+//   {
+//     variables: { title, text },
+//     optimisticUpdater: (store, data) => {
+//       const createField = store.getRootField('CreatePost')
+//       const postProxy = createField.getValue('')
+//     },
+//     updater:(store, data) => {
       
-    },
-    onCompleted: (response) => console.log('postCreated', response)
-  }
-) as UseMutationConfig<CreatePostMutation>
+//     },
+//     onCompleted: (response) => console.log('postCreated', response)
+//   } as UseMutationConfig<CreatePostMutation>
+// )

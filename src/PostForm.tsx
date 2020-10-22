@@ -5,7 +5,10 @@ import graphql from 'babel-plugin-relay/macro';
 import StyledTextarea from './styles/StyledTextarea'
 import feather from './assets/feather.svg';
 import { useMutation } from 'react-relay/lib/relay-experimental';
-import { CreatePost, createPostConfigs } from './mutations/CreatePost';
+import { CreatePost } from './mutations/CreatePost';
+import { UseMutationConfig } from 'react-relay/lib/relay-experimental/useMutation';
+import { CreatePostMutation } from './mutations/__generated__/CreatePostMutation.graphql';
+import { ConnectionHandler } from 'relay-runtime';
 
 type Props = {
   setPosts?:any
@@ -63,8 +66,37 @@ const PostForm: React.FC<Props> = ({setPosts}:Props) => {
   }
   const postSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     startTransition(() => {
-      // event.preventDefault()
-      commit(createPostConfigs(formData.postTitle, formData.postText))
+      event.preventDefault()
+      const config:UseMutationConfig<CreatePostMutation> = {
+        variables: { 
+          title: formData.postTitle, 
+          text: formData.postText
+         },
+        optimisticUpdater: (store, data) => {
+          const rootProxy = store.getRoot();
+          const connection = ConnectionHandler.getConnection(rootProxy, 'Feed_posts')
+
+          const createField = store.getRootField('CreatePost');
+          const newPost = createField.getLinkedRecord('post');
+
+          if(connection) {
+            ConnectionHandler.insertEdgeBefore(connection, newPost);
+          }
+        },
+        updater:(store, data) => {
+          const rootProxy = store.getRoot();
+          const connection = ConnectionHandler.getConnection(rootProxy, 'Feed_posts')
+
+          const createField = store.getRootField('CreatePost');
+          const newPost = createField.getLinkedRecord('post');
+
+          if(connection) {
+            ConnectionHandler.insertEdgeBefore(connection, newPost);
+          }
+        },
+        onCompleted: (response) => console.log('postCreated', response)
+      }
+      commit(config);
     })
   }
 
