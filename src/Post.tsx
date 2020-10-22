@@ -9,13 +9,10 @@ import graphql from 'babel-plugin-relay/macro'
 
 import edit from './assets/edit.svg';
 import trashBin from './assets/trashBin.svg';
-import Comments from './Comments';
+
 import StyledTextarea from './styles/StyledTextarea';
 import { Post_post$key } from './__generated__/Post_post.graphql';
-import {DeletePost} from './mutations/DeletePost'
-import { UseMutationConfig } from 'react-relay/lib/relay-experimental/useMutation';
-import { DeletePostMutation } from './mutations/__generated__/DeletePostMutation.graphql';
-import { ConnectionHandler } from 'relay-runtime';
+import { DeletePost, deletePostConfigs } from './mutations/DeletePost'
 
 dayjs.extend(relativeTime)
 
@@ -107,22 +104,7 @@ const Post:React.FC<Props> = ({post}:Props) => {
   post)
   const handleDelete = useCallback(()=> {
     startTransition(() => {
-      const config:UseMutationConfig<DeletePostMutation> = {
-        variables: {
-          id: postNode.id
-        },
-        optimisticUpdater: (store, data) => {
-          const postId = data.DeletePost?.payload?.id;
-          if(!postId) return
-          store.delete(postId)
-        },
-        updater: (store, data) => {
-          const postId = data.DeletePost?.payload?.id;
-          if(!postId) return
-          store.delete(postId)
-        }
-      }
-      deletePost(config)
+      deletePost(deletePostConfigs(postNode.id))
     }) 
   }, [post])
   const createdAtDiff = useMemo(() => {

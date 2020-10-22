@@ -23,9 +23,12 @@ export const createPostConfigs: CreatePostConfigs =
 (title, text,) => (
   {
     variables: { title, text },
-    configs: [{
+    optimisticUpdater: (store, data) => {
+
+    },
+    updated:(store, data) => {
       
-    }]
+    },
     onCompleted: (response) => console.log('postCreated', response)
   }
 ) as UseMutationConfig<CreatePostMutation>
