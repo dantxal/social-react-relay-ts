@@ -14,6 +14,7 @@ export default createGlobalStyle`
 }
 
 html, body, #root {
+  min-height: 100%;
   font: 14px 'Poppins', sans-serif;
 }
 

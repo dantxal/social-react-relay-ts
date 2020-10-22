@@ -1,7 +1,15 @@
-import React, {Suspense, useState, useEffect} from 'react';
+import React, {Suspense, useState, useEffect, unstable_useTransition as useTransition} from 'react';
 import styled from 'styled-components';
+import graphql from 'babel-plugin-relay/macro';
 
+import StyledTextarea from './styles/StyledTextarea'
 import feather from './assets/feather.svg';
+import { useMutation } from 'react-relay/lib/relay-experimental';
+import { CreatePost, createPostConfigs } from './mutations/CreatePost';
+
+type Props = {
+  setPosts?:any
+}
 
 const Wrapper = styled.div`
 form {
@@ -38,27 +46,44 @@ form {
 }
 `
 
-const TextArea = styled.textarea`
-  background-color: #e5e5e5;
-  border: 0;
-  border-radius: 10px;
-  padding: 8px 12px;
-  &::placeholdejhr {
-    color: #B1B6BE;
+const PostForm: React.FC<Props> = ({setPosts}:Props) => {
+  const [startTransition] = useTransition({timeoutMs: 5000})
+  const [formData, setFormData] = useState({
+    postTitle: '',
+    postText: ''
+  })
+  const [commit] = useMutation(CreatePost);
+  
+  function onChange(event: any) {
+    const {name, value} = event.target
+    setFormData({
+      ...formData,
+      [name]: value
+    });
   }
-  overflow: auto;
-`
-const PostForm: React.FC = () => {
+  const postSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    startTransition(() => {
+      // event.preventDefault()
+      commit(createPostConfigs(formData.postTitle, formData.postText))
+    })
+  }
+
   return <Wrapper>
-      <form>
-        <TextArea 
+      <form onSubmit={postSubmit}>
+        <StyledTextarea
+        value={formData.postTitle}
+        onChange={onChange}
+          name="postTitle"
           placeholder="How to right a post title" 
         />
         <div>
-          <TextArea 
+          <StyledTextarea
+            value={formData.postText}
+            onChange={onChange}
+            name="postText"
             placeholder="Write your post's content here" 
           />
-          <button>
+          <button type="submit">
             <img src={feather} alt="Add post"/>
           </button>
         </div>
