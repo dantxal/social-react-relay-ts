@@ -1,0 +1,183 @@
+schema {
+  query: RootQueryType
+  mutation: RootMutationType
+}
+
+type RootQueryType {
+  # Fetches an object given its ID
+  node(
+    # The ID of an object
+    id: ID!
+  ): Node
+  posts(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): PostTypeConnection!
+  comments(
+    after: String
+    first: Int
+    before: String
+    last: Int
+
+    # Custom Filter
+    banana: String = "banana"
+  ): CommentTypeConnection!
+}
+
+# An object with an ID
+interface Node {
+  # The id of the object.
+  id: ID!
+}
+
+# A connection to a list of items.
+type PostTypeConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [PostTypeEdge]
+}
+
+# Information about pagination in a connection.
+type PageInfo {
+  # When paginating forwards, are there more items?
+  hasNextPage: Boolean!
+
+  # When paginating backwards, are there more items?
+  hasPreviousPage: Boolean!
+
+  # When paginating backwards, the cursor to continue.
+  startCursor: String
+
+  # When paginating forwards, the cursor to continue.
+  endCursor: String
+}
+
+# An edge in a connection.
+type PostTypeEdge {
+  # The item at the end of the edge
+  node: PostType
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# Post Type
+type PostType implements Node {
+  # The ID of an object
+  id: ID!
+  text: String
+  title: String
+  comments(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): CommentTypeConnection
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# A connection to a list of items.
+type CommentTypeConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [CommentTypeEdge]
+}
+
+# An edge in a connection.
+type CommentTypeEdge {
+  # The item at the end of the edge
+  node: CommentType
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# Comment Type
+type CommentType implements Node {
+  # The ID of an object
+  id: ID!
+  text: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+scalar DateTime
+
+type RootMutationType {
+  # Create new post
+  CreatePost(input: PostCreationInput!): PostCreationPayload
+
+  # Delete post
+  DeletePost(input: PostDeletionInput!): PostDeletionPayload
+
+  # Update post
+  UpdatePost(input: PostUpdateInput!): PostUpdatePayload
+
+  # Create new comment
+  CreateComment(input: CommentCreationInput!): CommentCreationPayload
+
+  # Delete comment
+  DeleteComment(input: CommentDeletionInput!): CommentDeletionPayload
+}
+
+type PostCreationPayload {
+  post: PostType
+  clientMutationId: String
+}
+
+input PostCreationInput {
+  title: String
+  text: String
+  clientMutationId: String
+}
+
+type PostDeletionPayload {
+  payload: PostType
+  clientMutationId: String
+}
+
+input PostDeletionInput {
+  postId: String
+  clientMutationId: String
+}
+
+type PostUpdatePayload {
+  post: PostType
+  clientMutationId: String
+}
+
+input PostUpdateInput {
+  title: String
+  text: String
+  postId: ID
+  clientMutationId: String
+}
+
+type CommentCreationPayload {
+  comment: CommentType
+  clientMutationId: String
+}
+
+input CommentCreationInput {
+  postId: String
+  text: String
+  clientMutationId: String
+}
+
+type CommentDeletionPayload {
+  payload: CommentType
+  clientMutationId: String
+}
+
+input CommentDeletionInput {
+  commentId: String
+  clientMutationId: String
+}
