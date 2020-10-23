@@ -3,27 +3,20 @@ schema {
   mutation: RootMutationType
 }
 
+# The root of all queries
 type RootQueryType {
   # Fetches an object given its ID
   node(
     # The ID of an object
     id: ID!
   ): Node
-  posts(
-    after: String
-    first: Int
-    before: String
-    last: Int
-  ): PostTypeConnection!
+  posts(after: String, first: Int, before: String, last: Int): PostConnection!
   comments(
     after: String
     first: Int
     before: String
     last: Int
-
-    # Custom Filter
-    banana: String = "banana"
-  ): CommentTypeConnection!
+  ): CommentConnection!
 }
 
 # An object with an ID
@@ -33,12 +26,12 @@ interface Node {
 }
 
 # A connection to a list of items.
-type PostTypeConnection {
+type PostConnection {
   # Information to aid in pagination.
   pageInfo: PageInfo!
 
   # A list of edges.
-  edges: [PostTypeEdge]
+  edges: [PostEdge]
 }
 
 # Information about pagination in a connection.
@@ -57,7 +50,7 @@ type PageInfo {
 }
 
 # An edge in a connection.
-type PostTypeEdge {
+type PostEdge {
   # The item at the end of the edge
   node: PostType
 
@@ -76,22 +69,22 @@ type PostType implements Node {
     first: Int
     before: String
     last: Int
-  ): CommentTypeConnection
+  ): CommentConnection
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
 # A connection to a list of items.
-type CommentTypeConnection {
+type CommentConnection {
   # Information to aid in pagination.
   pageInfo: PageInfo!
 
   # A list of edges.
-  edges: [CommentTypeEdge]
+  edges: [CommentEdge]
 }
 
 # An edge in a connection.
-type CommentTypeEdge {
+type CommentEdge {
   # The item at the end of the edge
   node: CommentType
 
@@ -129,7 +122,7 @@ type RootMutationType {
 }
 
 type PostCreationPayload {
-  post: PostType
+  postEdge: PostEdge
   clientMutationId: String
 }
 
@@ -162,7 +155,7 @@ input PostUpdateInput {
 }
 
 type CommentCreationPayload {
-  comment: CommentType
+  commentEdge: CommentEdge
   clientMutationId: String
 }
 
