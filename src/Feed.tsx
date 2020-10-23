@@ -43,12 +43,12 @@ const Card = styled.div`
 type Props = {
   query: any
 };
-
+const MIN_POSTS = 5
 const Feed: React.FC<Props> = ({query}: Props) => {
   const {data, loadNext, isLoadingNext, hasNext, refetch} = usePaginationFragment<FeedPaginationQuery, Feed_query$key>(
     graphql`
       fragment Feed_query on RootQueryType 
-      @argumentDefinitions(first: {type: Int, defaultValue: 2}, after: { type: String })
+      @argumentDefinitions(first: {type: Int, defaultValue: 5}, after: { type: String })
       @refetchable(queryName: "FeedPaginationQuery")
       {
         posts(first: $first, after: $after) 
@@ -80,6 +80,16 @@ const Feed: React.FC<Props> = ({query}: Props) => {
   }, [isLoadingNext, loadNext]);
 
   const edges = data.posts.edges|| []
+  useEffect(() => {
+    console.log(edges.length, "HasNext", hasNext)
+    if(edges.length < MIN_POSTS - 1 ) {
+      refetch({
+        first: MIN_POSTS
+      })
+    }
+    
+  }, [edges, loadMore, hasNext, refetch])
+
 
   return <Wrapper>
     <Card>
@@ -95,7 +105,7 @@ const Feed: React.FC<Props> = ({query}: Props) => {
     {edges?.map(({node}:any, index) => {
       return (
       <Card key={`${node.id}${index}`}>
-        <Post post={node}/>
+        <Post post={node} />
       </Card>
       )}
     )}

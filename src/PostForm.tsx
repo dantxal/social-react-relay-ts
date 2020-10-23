@@ -115,9 +115,6 @@ const PostForm: React.FC<Props> = ({refetchPosts}:Props) => {
             ConnectionHandler.insertEdgeBefore(conn, newEdge);
           }
         },
-        onCompleted: () => {
-          refetchPosts()
-        }
       });
       setFormData({text: '', title: ''})
     })

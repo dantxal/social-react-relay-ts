@@ -18,23 +18,20 @@ export const DeletePost = graphql`
 
 export type DeletePostConfigs = (postID:string) => UseMutationConfig<DeletePostMutation>
 
-export const deletePostConfigs: DeletePostConfigs = 
-(postID) => (
-  {
-    variables: { id: postID },
-    updater: (store, data) => {
-      const postId = data.DeletePost?.payload?.id;
-      if(!postId) return
+export const deletePostConfigs = 
+(postID: string) => ({
+  variables: { id: postID },
+  updater: (store, data) => {
+    const postId = data.DeletePost?.payload?.id;
+    if(!postId) return;
 
-      const root = store.getRoot();
-      const conn = ConnectionHandler.getConnection(
-        root,
-        'Feed_posts'
-      );
-      if(conn) {
-        ConnectionHandler.deleteNode(conn, postId);
-      }
-    },
-    onCompleted: (response) => console.log('postDeleted', response)
+    const root = store.getRoot();
+    const conn = ConnectionHandler.getConnection(
+      root,
+      'Feed_posts'
+    );
+    if(conn) {
+      ConnectionHandler.deleteNode(conn, postId);
+    }
   }
-) as UseMutationConfig<DeletePostMutation>
+}) as UseMutationConfig<DeletePostMutation>
