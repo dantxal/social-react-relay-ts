@@ -1,6 +1,7 @@
 import graphql from 'babel-plugin-relay/macro';
 import { UseMutationConfig } from 'react-relay/lib/relay-experimental/useMutation';
-import { DeletePostMutation } from './mutations/__generated__/DeletePostMutation.graphql';
+import { ConnectionHandler } from 'relay-runtime';
+import { DeletePostMutation } from './__generated__/DeletePostMutation.graphql';
 
 
 export const DeletePost = graphql`
@@ -21,15 +22,18 @@ export const deletePostConfigs: DeletePostConfigs =
 (postID) => (
   {
     variables: { id: postID },
-    optimisticUpdater: (store, data) => {
-      const postId = data.DeletePost?.payload?.id;
-      if(!postId) return
-      store.delete(postId)
-    },
     updater: (store, data) => {
       const postId = data.DeletePost?.payload?.id;
       if(!postId) return
-      store.delete(postId)
+
+      const root = store.getRoot();
+      const conn = ConnectionHandler.getConnection(
+        root,
+        'Feed_posts'
+      );
+      if(conn) {
+        ConnectionHandler.deleteNode(conn, postId);
+      }
     },
     onCompleted: (response) => console.log('postDeleted', response)
   }
