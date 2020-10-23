@@ -33,7 +33,7 @@ const App = () => {
         ...Feed_query
       }
     `, {},
-    {fetchPolicy: 'store-and-network'}
+    {fetchPolicy: 'store-or-network'}
   )
 
   console.log(query)
