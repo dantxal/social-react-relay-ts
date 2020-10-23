@@ -1,4 +1,4 @@
-import React, {Suspense,  useCallback} from 'react';
+import React, {Suspense,  useCallback, useEffect} from 'react';
 import styled, {keyframes} from 'styled-components';
 import InfiniteScroll from 'react-infinite-scroller';
 import graphql from 'babel-plugin-relay/macro';
