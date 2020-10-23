@@ -8,6 +8,7 @@ declare global {
         debugRelayStore: any
     }
 };
+
 const network = Network.create(fetchGraphQL);
 
 const env = new Environment({

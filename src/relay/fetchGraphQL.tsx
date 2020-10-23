@@ -6,7 +6,7 @@ export function getToken(): string {
   return currentToken ? currentToken : '';
 }
 
-const GRAPHQL_URL= process.env.REACT_APP_GRAPHQL_URL
+const GRAPHQL_URL= process.env.REACT_APP_GRAPHQL_URL || 'http://localhost:8000/graphql'
 
 async function fetchGraphQL(request: RequestParameters, variables: Variables) {
     const loggedUser = Promise.resolve().then(() => getToken());

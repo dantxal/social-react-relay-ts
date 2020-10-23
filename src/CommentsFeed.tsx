@@ -1,4 +1,4 @@
-import React, {Suspense, useState, useEffect, useCallback} from 'react';
+import React, { useState, useCallback} from 'react';
 import styled from 'styled-components';
 import graphql from 'babel-plugin-relay/macro'
 import StyledTextarea from './styles/StyledTextarea';
@@ -8,6 +8,7 @@ import { UseMutationConfig } from 'react-relay/lib/relay-experimental/useMutatio
 import { CreateCommentMutation } from './mutations/__generated__/CreateCommentMutation.graphql';
 import { useMutation, usePaginationFragment } from 'react-relay/lib/relay-experimental';
 import { CommentsFeedPaginationQuery } from './__generated__/CommentsFeedPaginationQuery.graphql';
+import {Post_post} from "./__generated__/Post_post.graphql";
 
 const Comment = styled.div`
   margin-top: 12px;
@@ -25,10 +26,12 @@ const Footer = styled.div`
   color: #666;
 `
 type Props = {
-  postQuery: any
+  postQuery: Post_post
 }
 const CommentsFeed:React.FC<Props> = ({postQuery}:Props) => {
-  const {data, loadNext, isLoadingNext, hasNext, refetch} = usePaginationFragment<CommentsFeedPaginationQuery>(
+  const [commitCreateComment] = useMutation(CreateComment);
+  const [commentText, setCommentText] = useState('')
+  const {data, loadNext, isLoadingNext, hasNext} = usePaginationFragment<CommentsFeedPaginationQuery>(
     graphql`
       fragment CommentsFeed_query on PostType
       @argumentDefinitions(first: {type: Int, defaultValue: 5}, after: { type: String })
@@ -53,8 +56,7 @@ const CommentsFeed:React.FC<Props> = ({postQuery}:Props) => {
     `, postQuery
   )
 
-  const [commitCreateComment] = useMutation(CreateComment);
-  const [commentText, setCommentText] = useState('')
+
 
   const loadMore = useCallback(() => {
     // Don't fetch again if we're already loading the next page
@@ -67,7 +69,6 @@ const CommentsFeed:React.FC<Props> = ({postQuery}:Props) => {
 
   const handleSubmitComment = (event: React.SyntheticEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
-
     const configs: UseMutationConfig<CreateCommentMutation> = {
       variables: {
         id: postQuery.id,
@@ -78,7 +79,6 @@ const CommentsFeed:React.FC<Props> = ({postQuery}:Props) => {
         const newEdge = payload.getLinkedRecord('commentEdge');
 
         const root = store.get(postQuery.id);
-        console.log(root);
         if(!root) return;
         const conn = ConnectionHandler.getConnection(
           root,
@@ -94,11 +94,6 @@ const CommentsFeed:React.FC<Props> = ({postQuery}:Props) => {
     setCommentText('');
   }
 
-
-  const handleChangeComment = (event: any) => {
-    setCommentText(event.target.value)
-  }
-
   const commentsNodes = data.comments?.edges || []
 
 
@@ -107,13 +102,12 @@ const CommentsFeed:React.FC<Props> = ({postQuery}:Props) => {
       <StyledTextarea 
       placeholder="Write your comment here" 
       onKeyPress={e => {
-        console.log('Key pressed', e.key)
         if(e.key === "Enter") {
           handleSubmitComment(e)
         }
       }}
       value={commentText}
-      onChange={handleChangeComment}
+      onChange={(e) => setCommentText(e?.target.value)}
       />
 
       {commentsNodes.map((comment:any) =>(

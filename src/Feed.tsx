@@ -1,5 +1,5 @@
-import React, {Suspense, useState, useEffect, useCallback} from 'react';
-import styled from 'styled-components';
+import React, {Suspense,  useCallback} from 'react';
+import styled, {keyframes} from 'styled-components';
 import InfiniteScroll from 'react-infinite-scroller';
 import graphql from 'babel-plugin-relay/macro';
 import PostForm from './PostForm';
@@ -12,11 +12,24 @@ import { usePaginationFragment } from 'react-relay/hooks';
 import { FeedPaginationQuery } from './__generated__/FeedPaginationQuery.graphql';
 import { Feed_query$key } from './__generated__/Feed_query.graphql';
 
+
+export const fadeDown = keyframes`
+0% {
+  opacity: 0; transform: translateY(-10px);
+}
+100% {
+  opacity: 1; transform: translateY(0px);
+}
+`
+
 const Wrapper= styled.div`
   width: 600px;
   margin-top: 25px;
   padding-bottom: 20px;
   height: 100%;
+  > div:last-child {
+    animation: ${fadeDown} 0.5s cubic-bezier(0.65, 0.05, 0.36, 1);
+  }
 `
 const Card = styled.div`
   & + & {
@@ -24,7 +37,7 @@ const Card = styled.div`
   }
   background-color: #fff;
   padding: 22px;
-  border-radius: 10px;
+  border-radius: 3px;
 `
 
 type Props = {
@@ -80,7 +93,6 @@ const Feed: React.FC<Props> = ({query}: Props) => {
       loader={<Loading />}
     >
     {edges?.map(({node}:any, index) => {
-      // if(!node) return <div></div>
       return (
       <Card key={`${node.id}${index}`}>
         <Post post={node}/>

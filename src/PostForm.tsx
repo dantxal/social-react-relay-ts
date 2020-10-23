@@ -1,4 +1,4 @@
-import React, {Suspense, useState, useEffect, unstable_useTransition as useTransition} from 'react';
+import React, { useState, useEffect, unstable_useTransition as useTransition} from 'react';
 import { ConnectionHandler } from 'relay-runtime';
 import styled from 'styled-components';
 import { FiFeather, FiX } from 'react-icons/fi';
@@ -30,14 +30,13 @@ form {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+    
     textarea {
       display: flex;
       flex: 1;
-      resize: vertical;
+      resize: none;
       height: 100px;
       min-height: 100px;
-      
-      
     }
 
     div {
@@ -114,11 +113,9 @@ const PostForm: React.FC<Props> = ({refetchPosts}:Props) => {
           );
           if(conn) {
             ConnectionHandler.insertEdgeBefore(conn, newEdge);
-            console.log(payload)
           }
         },
         onCompleted: () => {
-          console.log('Refetching...')
           refetchPosts()
         }
       });

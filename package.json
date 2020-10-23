@@ -26,6 +26,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start": "npm run relay && react-scripts start",
+    "dev:start": "yarn relay && react-scripts start",
     "build": "npm run relay && react-scripts build",
     "relay": "relay-compiler",
     "relay:watch": "relay-compiler --watch $@"

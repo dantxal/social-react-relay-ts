@@ -2,29 +2,22 @@ import React, { useCallback, useMemo, unstable_useTransition as useTransition, u
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime'
-
 import { useMutation } from 'react-relay/lib/relay-experimental';
 import { useFragment } from 'react-relay/hooks';
 import graphql from 'babel-plugin-relay/macro'
 import { commitMutation } from 'react-relay';
 import environment from './relay/environment'
-
 import { FiEdit2, FiFeather, FiTrash, FiX } from 'react-icons/fi'
 import StyledTextarea from './styles/StyledTextarea';
-
 import { Post_post$key } from './__generated__/Post_post.graphql';
 import { DeletePost, deletePostConfigs } from './mutations/DeletePost'
 import {EditPost} from './mutations/EditPost';
 import {EditPostMutation} from './mutations/__generated__/EditPostMutation.graphql';
 import CommentsFeed from './CommentsFeed';
-
-
 dayjs.extend(relativeTime)
 
 const Container = styled.div`
   width: 100%;
-  /* border: 1px red solid; */
-
   header {
     display: flex;
     flex-direction: row;
@@ -67,7 +60,7 @@ const Container = styled.div`
     height: 30px;
     width: 100%;
     min-height: 48px;
-    resize: vertical;
+    resize: none;
   }
 
   .confirm {
@@ -94,7 +87,7 @@ const Container = styled.div`
       textarea {
         display: flex;
         flex: 1;
-        resize: vertical;
+        resize: none;
         height: 100px;
         min-height: 100px;
         margin: 0;
@@ -127,15 +120,12 @@ const CancelButton = styled.button`
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  
   background-color: #fd0404;
   box-shadow: 1px 0 8px #fd0404;
   height: 40px !important;
   width: 40px !important;
   padding: 10px;
 `
-
-type FixMe = any
 
 type Props = {
   post: Post_post$key
@@ -168,8 +158,8 @@ const Post:React.FC<Props> = ({post}:Props) => {
     createdAt: postResponse.createdAt,
   }
   const createdAtDiff = useMemo(() => {
-    const date:FixMe = postNode?.createdAt
-    return dayjs(date).fromNow()
+    const date = postNode?.createdAt
+    return dayjs(date as string).fromNow()
   }, [postNode])
 
   const handleDelete = useCallback(()=> {
@@ -177,6 +167,7 @@ const Post:React.FC<Props> = ({post}:Props) => {
       deletePost(deletePostConfigs(postNode.id))
     }) 
   }, [deletePost, postNode.id, startTransition])
+
   const handleStartEdit = useCallback(() => {
     setFormData({
       title: postNode.title || '',
@@ -184,6 +175,7 @@ const Post:React.FC<Props> = ({post}:Props) => {
     })
     setIsEditing(true);
   }, [postNode.text, postNode.title])
+
   const handleChange = (event: any) => {
     const {name, value} = event.target
     setFormData({
@@ -191,6 +183,7 @@ const Post:React.FC<Props> = ({post}:Props) => {
       [name]: value
     });
   }
+
   const handleEdit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if(!formData.text || !formData.title) return;
@@ -218,10 +211,7 @@ const Post:React.FC<Props> = ({post}:Props) => {
       setIsEditing(false);
     })
   }
-  const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setIsEditing(false)
-  }
+
 
  
   return (
@@ -242,7 +232,7 @@ const Post:React.FC<Props> = ({post}:Props) => {
           onChange={handleChange}
         />
         <div>
-          <CancelButton type="button" onClick={handleCancel}>
+          <CancelButton type="button" onClick={ () => setIsEditing(false)}>
             <FiX size={24} color="#fff" />
           </CancelButton>
           <button type="submit" className="confirm">
@@ -250,9 +240,7 @@ const Post:React.FC<Props> = ({post}:Props) => {
           </button>
         </div>
       </div>
-      
     </form>
-    
     :
     <>
       <header>

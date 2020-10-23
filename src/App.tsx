@@ -24,6 +24,8 @@ const App = () => {
     display: flex;
     flex-direction: column;
     align-items: center; 
+     
+   
   `
   const query = useLazyLoadQuery<AppQuery>(
     graphql`
@@ -33,8 +35,6 @@ const App = () => {
     `, {},
     {fetchPolicy: 'store-or-network'}
   )
-
-  console.log(query)
 
   return (
     <SContainer className="App">

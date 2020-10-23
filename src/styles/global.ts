@@ -7,6 +7,9 @@ export default createGlobalStyle`
   padding: 0;
   outline: 0;
   box-sizing: border-box;
+  ::-webkit-scrollbar {
+  display: none;
+}
 }
 
 *:focus {
