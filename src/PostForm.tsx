@@ -1,17 +1,22 @@
 import React, {Suspense, useState, useEffect, unstable_useTransition as useTransition} from 'react';
+import { ConnectionHandler } from 'relay-runtime';
 import styled from 'styled-components';
-import graphql from 'babel-plugin-relay/macro';
+import { FiFeather, FiX } from 'react-icons/fi';
 
 import StyledTextarea from './styles/StyledTextarea'
-import feather from './assets/feather.svg';
-import { useMutation } from 'react-relay/lib/relay-experimental';
+
+import { commitMutation } from 'react-relay';
+import environment from './relay/environment'
+
 import { CreatePost } from './mutations/CreatePost';
-import { UseMutationConfig } from 'react-relay/lib/relay-experimental/useMutation';
 import { CreatePostMutation } from './mutations/__generated__/CreatePostMutation.graphql';
-import { ConnectionHandler } from 'relay-runtime';
 
 type Props = {
-  setPosts?:any
+  refetchPosts?:any
+}
+
+type CancelButtonProps = {
+  isFormEmpty: boolean
 }
 
 const Wrapper = styled.div`
@@ -35,27 +40,48 @@ form {
       
     }
 
-    button {
-      height: 48px;
-      width: 48px;
-      margin-left: 20px;
-      background-color: #0458FD;
-      padding: 12px;
-      border-radius: 50%;
-      box-shadow: 1px 0 8px #0458FD 
+    div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
 
+      button {
+        height: 48px;
+        width: 48px;
+        margin-left: 20px;
+        padding: 12px;
+        border-radius: 50%;
+      }
+      .confirm {
+        background-color: #0458FD;
+        box-shadow: 1px 0 8px #0458FD; 
+      }
     }
   }
 }
 `
+const CancelButton = styled.button<CancelButtonProps>`
+  opacity: ${({isFormEmpty}) => isFormEmpty ? 0 : 1};
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  
+  background-color: #fd0404;
+  box-shadow: 1px 0 8px #fd0404;
+  height: 40px !important;
+  width: 40px !important;
+  padding: 10px;
+`
 
-const PostForm: React.FC<Props> = ({setPosts}:Props) => {
+const PostForm: React.FC<Props> = ({refetchPosts}:Props) => {
   const [startTransition] = useTransition({timeoutMs: 5000})
   const [formData, setFormData] = useState({
-    postTitle: '',
-    postText: ''
+    title: '',
+    text: ''
   })
-  const [commit] = useMutation(CreatePost);
+  const [isFormEmpty, setIsFormEmpty] = useState(true)
+  
   
   function onChange(event: any) {
     const {name, value} = event.target
@@ -64,60 +90,74 @@ const PostForm: React.FC<Props> = ({setPosts}:Props) => {
       [name]: value
     });
   }
-  const postSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    setIsFormEmpty(!formData.text && !formData.title ? true : false)
+  }, [formData])
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if(!formData.text || !formData.title) return;
     startTransition(() => {
-      event.preventDefault()
-      const config:UseMutationConfig<CreatePostMutation> = {
-        variables: { 
-          title: formData.postTitle, 
-          text: formData.postText
-         },
-        optimisticUpdater: (store, data) => {
-          const rootProxy = store.getRoot();
-          const connection = ConnectionHandler.getConnection(rootProxy, 'Feed_posts')
+      const dispose = commitMutation<CreatePostMutation>(environment, {
+        mutation: CreatePost,
+        variables: {
+          text: formData.text,
+          title: formData.title
+        },
+        updater:(store) => {
+          const payload = store.getRootField('CreatePost');
+          const newEdge = payload.getLinkedRecord('postEdge');
 
-          const createField = store.getRootField('CreatePost');
-          const newPost = createField.getLinkedRecord('post');
-
-          if(connection) {
-            ConnectionHandler.insertEdgeBefore(connection, newPost);
+          const root = store.getRoot();
+          const conn = ConnectionHandler.getConnection(
+            root,
+            'Feed_posts'
+          );
+          if(conn) {
+            ConnectionHandler.insertEdgeBefore(conn, newEdge);
+            console.log(payload)
           }
         },
-        updater:(store, data) => {
-          const rootProxy = store.getRoot();
-          const connection = ConnectionHandler.getConnection(rootProxy, 'Feed_posts')
-
-          const createField = store.getRootField('CreatePost');
-          const newPost = createField.getLinkedRecord('post');
-
-          if(connection) {
-            ConnectionHandler.insertEdgeBefore(connection, newPost);
-          }
-        },
-        onCompleted: (response) => console.log('postCreated', response)
-      }
-      commit(config);
+        onCompleted: () => {
+          console.log('Refetching...')
+          refetchPosts()
+        }
+      });
+      setFormData({text: '', title: ''})
     })
   }
 
+  const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setFormData({title: '', text: ''})
+  }
   return <Wrapper>
-      <form onSubmit={postSubmit}>
+      <form onSubmit={handleSubmit}>
         <StyledTextarea
-        value={formData.postTitle}
+        value={formData.title}
         onChange={onChange}
-          name="postTitle"
+          name="title"
           placeholder="How to right a post title" 
         />
         <div>
           <StyledTextarea
-            value={formData.postText}
+            value={formData.text}
             onChange={onChange}
-            name="postText"
+            name="text"
             placeholder="Write your post's content here" 
           />
-          <button type="submit">
-            <img src={feather} alt="Add post"/>
+          <div>
+          <CancelButton 
+            className="cancel" 
+            type="button" 
+            onClick={handleClear}
+            isFormEmpty={isFormEmpty}
+          >
+            <FiX size={24} color="#fff" />
+          </CancelButton>
+          <button className="confirm" type="submit">
+            <FiFeather size={24} color="#fff" />
           </button>
+          </div>
         </div>
       </form>
     </Wrapper>

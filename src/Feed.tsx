@@ -16,6 +16,7 @@ const Wrapper= styled.div`
   width: 600px;
   margin-top: 25px;
   padding-bottom: 20px;
+  height: 100%;
 `
 const Card = styled.div`
   & + & {
@@ -35,7 +36,7 @@ const Feed: React.FC<Props> = ({query}: Props) => {
     graphql`
       fragment Feed_query on RootQueryType 
       @argumentDefinitions(first: {type: Int, defaultValue: 2}, after: { type: String })
-      @refetchable(queryName: "FeedPaginationQuery", )
+      @refetchable(queryName: "FeedPaginationQuery")
       {
         posts(first: $first, after: $after) 
         @connection(key: "Feed_posts", filters: [])
@@ -55,6 +56,8 @@ const Feed: React.FC<Props> = ({query}: Props) => {
     `, query
   )
 
+  
+
   const loadMore = useCallback(() => {
     // Don't fetch again if we're already loading the next page
     if (isLoadingNext) {
@@ -64,26 +67,29 @@ const Feed: React.FC<Props> = ({query}: Props) => {
   }, [isLoadingNext, loadNext]);
 
   const edges = data.posts.edges|| []
-  const uniqueEdges = edges.filter(
-    (item, index) => edges.indexOf(item) === index) 
-  console.log(uniqueEdges)
+
   return <Wrapper>
     <Card>
-      <PostForm setPosts={refetch} />
+      <PostForm refetchPosts={refetch} />
     </Card>
+    <Suspense fallback={<div>Loading...</div>}>
     <InfiniteScroll
       style={{marginTop: 30}}
       loadMore={loadMore}
       hasMore={hasNext}
       loader={<Loading />}
     >
-    {uniqueEdges?.map(({node}:any, index) => (
+    {edges?.map(({node}:any, index) => {
+      // if(!node) return <div></div>
+      return (
       <Card key={`${node.id}${index}`}>
         <Post post={node}/>
       </Card>
-      )
+      )}
     )}
     </InfiniteScroll>
+    </Suspense>
+  
   </Wrapper>
 }
 

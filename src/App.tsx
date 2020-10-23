@@ -9,9 +9,7 @@ import styled from 'styled-components';
 import GlobalStyle from './styles/global'
 import Feed from './Feed'
 import ErrorBoundary from './ErrorBoundary';
-
-import {Feed_query} from './__generated__/Feed_query.graphql'
-
+import { AppQuery } from './__generated__/AppQuery.graphql';
 
 const App = () => {
   const SLogo = styled.img`
@@ -22,12 +20,12 @@ const App = () => {
     background-color: #e5e5e5;
     padding: 20px;
     width: 100%;
-    height: 100%;
+    min-height: 100vh;;
     display: flex;
     flex-direction: column;
     align-items: center; 
   `
-  const query = useLazyLoadQuery(
+  const query = useLazyLoadQuery<AppQuery>(
     graphql`
       query AppQuery {
         ...Feed_query
