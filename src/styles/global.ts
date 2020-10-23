@@ -17,11 +17,12 @@ export default createGlobalStyle`
 }
 
 html, body, #root {
-  min-height: 100%;
+  min-height: 100vh !important;
   font: 14px 'Poppins', sans-serif;
 }
 
 body {
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased !important;
   body, input, button {
     font: 14px 'Poppins', sans-serif;

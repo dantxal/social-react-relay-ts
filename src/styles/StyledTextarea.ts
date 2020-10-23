@@ -9,5 +9,6 @@ export default styled.textarea`
   &::placeholder {
     color: #B1B6BE;
   }
+  min-height: fit-content;
   overflow: auto;
 `
