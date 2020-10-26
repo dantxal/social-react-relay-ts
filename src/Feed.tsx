@@ -2,12 +2,12 @@ import React, {Suspense,  useCallback, useEffect} from 'react';
 import styled, {keyframes} from 'styled-components';
 import InfiniteScroll from 'react-infinite-scroller';
 import graphql from 'babel-plugin-relay/macro';
+import { usePaginationFragment } from 'react-relay/hooks';
+
 import PostForm from './PostForm';
 import Post from './Post'
-
 import Loading from './Loading'
 
-import { usePaginationFragment } from 'react-relay/hooks';
 
 import { FeedPaginationQuery } from './__generated__/FeedPaginationQuery.graphql';
 import { Feed_query$key } from './__generated__/Feed_query.graphql';
@@ -79,24 +79,14 @@ const Feed: React.FC<Props> = ({query}: Props) => {
     loadNext(2);
   }, [isLoadingNext, loadNext]);
 
-  const edges = data.posts.edges|| []
-  useEffect(() => {
-    console.log(edges.length, "HasNext", hasNext)
-    if(edges.length < MIN_POSTS - 1 ) {
-      refetch({
-        first: MIN_POSTS
-      })
-    }
-    
-  }, [edges, loadMore, hasNext, refetch])
-
+  const edges = data?.posts?.edges|| []
 
   return <Wrapper>
     <Card>
       <PostForm refetchPosts={refetch} />
     </Card>
     <Suspense fallback={<div>Loading...</div>}>
-    <InfiniteScroll
+      <InfiniteScroll
       style={{marginTop: 30}}
       loadMore={loadMore}
       hasMore={hasNext}
@@ -105,13 +95,12 @@ const Feed: React.FC<Props> = ({query}: Props) => {
     {edges?.map(({node}:any, index) => {
       return (
       <Card key={`${node.id}${index}`}>
-        <Post post={node} />
+        <Post post={node} refetchPosts={refetch} />
       </Card>
       )}
     )}
     </InfiniteScroll>
     </Suspense>
-  
   </Wrapper>
 }
 

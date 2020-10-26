@@ -10,7 +10,7 @@ type RootQueryType {
     # The ID of an object
     id: ID!
   ): Node
-  posts(after: String, first: Int, before: String, last: Int): PostConnection!
+  posts(after: String, first: Int, before: String, last: Int): PostConnection
   comments(
     after: String
     first: Int
@@ -121,36 +121,42 @@ type RootMutationType {
   DeleteComment(input: CommentDeletionInput!): CommentDeletionPayload
 }
 
+input PostCreationInput {
+  title: String!
+  text: String!
+  clientMutationId: String
+}
+
 type PostCreationPayload {
   postEdge: PostEdge
   clientMutationId: String
 }
 
-input PostCreationInput {
-  title: String
-  text: String
+input PostDeletionInput {
+  postId: String!
   clientMutationId: String
 }
 
 type PostDeletionPayload {
-  payload: PostType
-  clientMutationId: String
-}
-
-input PostDeletionInput {
-  postId: String
-  clientMutationId: String
-}
-
-type PostUpdatePayload {
-  post: PostType
+  payload: PostType!
   clientMutationId: String
 }
 
 input PostUpdateInput {
-  title: String
-  text: String
-  postId: ID
+  title: String!
+  text: String!
+  postId: ID!
+  clientMutationId: String
+}
+
+type PostUpdatePayload {
+  post: PostType!
+  clientMutationId: String
+}
+
+input CommentCreationInput {
+  postId: ID!
+  text: String!
   clientMutationId: String
 }
 
@@ -159,18 +165,12 @@ type CommentCreationPayload {
   clientMutationId: String
 }
 
-input CommentCreationInput {
-  postId: String
-  text: String
+input CommentDeletionInput {
+  commentId: String!
   clientMutationId: String
 }
 
 type CommentDeletionPayload {
-  payload: CommentType
-  clientMutationId: String
-}
-
-input CommentDeletionInput {
-  commentId: String
+  payload: CommentType!
   clientMutationId: String
 }

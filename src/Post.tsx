@@ -129,9 +129,10 @@ const CancelButton = styled.button`
 
 type Props = {
   post: Post_post$key
+  refetchPosts: ({first}:{first: number}) => void
 }
 
-const Post:React.FC<Props> = ({post}:Props) => {
+const Post:React.FC<Props> = ({ post, refetchPosts }:Props) => {
   const [formData, setFormData] = useState({
     title: '',
     text: ''
@@ -166,6 +167,7 @@ const Post:React.FC<Props> = ({post}:Props) => {
     startTransition(() => {
       deletePost(deletePostConfigs(postNode.id))
     }) 
+    refetchPosts({first: 5})
   }, [deletePost, postNode.id, startTransition])
 
   const handleStartEdit = useCallback(() => {
