@@ -1,7 +1,7 @@
 import graphql from 'babel-plugin-relay/macro';
 
 export const CreateComment = graphql`
-  mutation CreateCommentMutation($id: String!, $text: String!) {
+  mutation CreateCommentMutation($id: ID!, $text: String!) {
     CreateComment(input: { 
       postId: $id,
       text: $text, 
