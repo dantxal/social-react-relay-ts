@@ -10,9 +10,12 @@ import environment from './relay/environment'
 
 import { CreatePost } from './mutations/CreatePost';
 import { CreatePostMutation } from './mutations/__generated__/CreatePostMutation.graphql';
+import { Options, RefetchFnDynamic } from 'react-relay/lib/relay-experimental/useRefetchableFragmentNode';
+import { FeedPaginationQuery } from './__generated__/FeedPaginationQuery.graphql';
+import { Feed_query$key } from './__generated__/Feed_query.graphql';
 
 type Props = {
-  refetchPosts?:any
+  refetchPosts: RefetchFnDynamic<FeedPaginationQuery, Feed_query$key, Options>
 }
 
 type CancelButtonProps = {
@@ -115,6 +118,9 @@ const PostForm: React.FC<Props> = ({refetchPosts}:Props) => {
             ConnectionHandler.insertEdgeBefore(conn, newEdge);
           }
         },
+        onCompleted: () => {
+          refetchPosts({first: 10})
+        }
       });
       setFormData({text: '', title: ''})
     })

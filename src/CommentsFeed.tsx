@@ -8,7 +8,7 @@ import { UseMutationConfig } from 'react-relay/lib/relay-experimental/useMutatio
 import { CreateCommentMutation } from './mutations/__generated__/CreateCommentMutation.graphql';
 import { useMutation, usePaginationFragment } from 'react-relay/lib/relay-experimental';
 import { CommentsFeedPaginationQuery } from './__generated__/CommentsFeedPaginationQuery.graphql';
-import {Post_post} from "./__generated__/Post_post.graphql";
+import {Post_post, Post_post$key} from "./__generated__/Post_post.graphql";
 
 const Comment = styled.div`
   margin-top: 12px;
@@ -26,12 +26,13 @@ const Footer = styled.div`
   color: #666;
 `
 type Props = {
-  postQuery: Post_post
+  postQuery: Post_post$key
+  postId: string
 }
-const CommentsFeed:React.FC<Props> = ({postQuery}:Props) => {
+const CommentsFeed:React.FC<Props> = ({ postQuery, postId}:Props) => {
   const [commitCreateComment] = useMutation(CreateComment);
   const [commentText, setCommentText] = useState('')
-  const {data, loadNext, isLoadingNext, hasNext} = usePaginationFragment<CommentsFeedPaginationQuery>(
+  const {data, loadNext, isLoadingNext, hasNext} = usePaginationFragment<CommentsFeedPaginationQuery, Post_post$key>(
     graphql`
       fragment CommentsFeed_query on PostType
       @argumentDefinitions(first: {type: Int, defaultValue: 5}, after: { type: String })
@@ -71,14 +72,14 @@ const CommentsFeed:React.FC<Props> = ({postQuery}:Props) => {
     event.preventDefault();
     const configs: UseMutationConfig<CreateCommentMutation> = {
       variables: {
-        id: postQuery.id,
+        id: postId,
         text: commentText,
       },
       updater:(store) => {
         const payload = store.getRootField('CreateComment');
         const newEdge = payload.getLinkedRecord('commentEdge');
 
-        const root = store.get(postQuery.id);
+        const root = store.get(postId);
         if(!root) return;
         const conn = ConnectionHandler.getConnection(
           root,

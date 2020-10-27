@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, unstable_useTransition as useTransition, useState } from 'react';
+import React, { useCallback, useMemo, unstable_useTransition as useTransition, useState,  } from 'react';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -130,16 +130,17 @@ const CancelButton = styled.button`
 type Props = {
   post: Post_post$key
   refetchPosts: ({first}:{first: number}) => void
+  postsLength: number
 }
 
-const Post:React.FC<Props> = ({ post, refetchPosts }:Props) => {
+const Post:React.FC<Props> = ({ post, refetchPosts, postsLength }:Props) => {
   const [formData, setFormData] = useState({
     title: '',
     text: ''
   })
   const [isEditing, setIsEditing] = useState(false)
 
-  const [startTransition] = useTransition()
+  const [startTransition] = useTransition({timeoutMs: 500})
   const [deletePost] = useMutation(DeletePost);
   const postResponse = useFragment<Post_post$key>(graphql`
     fragment Post_post on PostType {
@@ -147,7 +148,6 @@ const Post:React.FC<Props> = ({ post, refetchPosts }:Props) => {
       title
       text
       createdAt        
-      ...CommentsFeed_query 
     }
   `,
   post)
@@ -167,7 +167,10 @@ const Post:React.FC<Props> = ({ post, refetchPosts }:Props) => {
     startTransition(() => {
       deletePost(deletePostConfigs(postNode.id))
     }) 
-    refetchPosts({first: 5})
+    if(postsLength < 5) {
+      console.log('length from post', postsLength)
+      refetchPosts({first: postsLength + 1})
+    }
   }, [deletePost, postNode.id, startTransition])
 
   const handleStartEdit = useCallback(() => {
@@ -265,7 +268,7 @@ const Post:React.FC<Props> = ({ post, refetchPosts }:Props) => {
       </p>
     </>}
     
-    <CommentsFeed postQuery={postResponse} />
+    <CommentsFeed postQuery={post} postId={postNode.id} />
   </Container>
   )
 }

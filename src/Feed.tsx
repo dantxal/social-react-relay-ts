@@ -1,4 +1,4 @@
-import React, {Suspense,  useCallback, useEffect} from 'react';
+import React, {Suspense,  useCallback, useEffect, useState} from 'react';
 import styled, {keyframes} from 'styled-components';
 import InfiniteScroll from 'react-infinite-scroller';
 import graphql from 'babel-plugin-relay/macro';
@@ -62,15 +62,13 @@ const Feed: React.FC<Props> = ({query}: Props) => {
             node {
               id
               ...Post_post
+              ...CommentsFeed_query 
             }
           }
         }
       }
     `, query
   )
-
-  
-
   const loadMore = useCallback(() => {
     // Don't fetch again if we're already loading the next page
     if (isLoadingNext) {
@@ -78,8 +76,10 @@ const Feed: React.FC<Props> = ({query}: Props) => {
     }
     loadNext(2);
   }, [isLoadingNext, loadNext]);
+  const edges = data?.posts?.edges || [];
 
-  const edges = data?.posts?.edges|| []
+  console.log('length', edges.length);
+ 
 
   return <Wrapper>
     <Card>
@@ -95,7 +95,7 @@ const Feed: React.FC<Props> = ({query}: Props) => {
     {edges?.map(({node}:any, index) => {
       return (
       <Card key={`${node.id}${index}`}>
-        <Post post={node} refetchPosts={refetch} />
+        <Post post={node} refetchPosts={refetch} postsLength={edges.length || 0}/>
       </Card>
       )}
     )}

@@ -46,7 +46,7 @@ const App = () => {
 
 const AppRoot = () => (
   <RelayEnvironmentProvider environment={environment}>
-    <Suspense fallback={() => <div>Loading...</div>}>
+    <Suspense fallback={<div>Loading...</div>}>
       <ErrorBoundary>
         <App/>
         <GlobalStyle />
