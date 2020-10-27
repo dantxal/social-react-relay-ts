@@ -140,7 +140,7 @@ const Post:React.FC<Props> = ({ post, refetchPosts, postsLength }:Props) => {
   })
   const [isEditing, setIsEditing] = useState(false)
 
-  const [startTransition] = useTransition({timeoutMs: 500})
+  const [startTransition] = useTransition({timeoutMs: 200})
   const [deletePost] = useMutation(DeletePost);
   const postResponse = useFragment<Post_post$key>(graphql`
     fragment Post_post on PostType {
@@ -168,7 +168,6 @@ const Post:React.FC<Props> = ({ post, refetchPosts, postsLength }:Props) => {
       deletePost(deletePostConfigs(postNode.id))
     }) 
     if(postsLength < 5) {
-      console.log('length from post', postsLength)
       refetchPosts({first: postsLength + 1})
     }
   }, [deletePost, postNode.id, startTransition])

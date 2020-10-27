@@ -77,7 +77,7 @@ const CancelButton = styled.button<CancelButtonProps>`
 `
 
 const PostForm: React.FC<Props> = ({refetchPosts}:Props) => {
-  const [startTransition] = useTransition({timeoutMs: 5000})
+  const [startTransition] = useTransition({timeoutMs: 200})
   const [formData, setFormData] = useState({
     title: '',
     text: ''

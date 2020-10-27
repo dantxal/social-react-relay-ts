@@ -10,6 +10,7 @@ import GlobalStyle from './styles/global'
 import Feed from './Feed'
 import ErrorBoundary from './ErrorBoundary';
 import { AppQuery } from './__generated__/AppQuery.graphql';
+import Loading from './Loading';
 
 const App = () => {
   const SLogo = styled.img`
@@ -46,7 +47,7 @@ const App = () => {
 
 const AppRoot = () => (
   <RelayEnvironmentProvider environment={environment}>
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading />}>
       <ErrorBoundary>
         <App/>
         <GlobalStyle />

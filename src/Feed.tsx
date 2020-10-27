@@ -78,14 +78,10 @@ const Feed: React.FC<Props> = ({query}: Props) => {
   }, [isLoadingNext, loadNext]);
   const edges = data?.posts?.edges || [];
 
-  console.log('length', edges.length);
- 
-
   return <Wrapper>
     <Card>
       <PostForm refetchPosts={refetch} />
     </Card>
-    <Suspense fallback={<div>Loading...</div>}>
       <InfiniteScroll
       style={{marginTop: 30}}
       loadMore={loadMore}
@@ -100,7 +96,6 @@ const Feed: React.FC<Props> = ({query}: Props) => {
       )}
     )}
     </InfiniteScroll>
-    </Suspense>
   </Wrapper>
 }
 
