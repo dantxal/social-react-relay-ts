@@ -1,4 +1,4 @@
-import React, {Suspense,  useCallback, useEffect, useState} from 'react';
+import React, { useCallback } from 'react';
 import styled, {keyframes} from 'styled-components';
 import InfiniteScroll from 'react-infinite-scroller';
 import graphql from 'babel-plugin-relay/macro';
@@ -6,12 +6,10 @@ import { usePaginationFragment } from 'react-relay/hooks';
 
 import PostForm from './PostForm';
 import Post from './Post'
-import LoadingApp from './LoadingApp'
-
+import Loading from './Loading'
 
 import { FeedPaginationQuery } from './__generated__/FeedPaginationQuery.graphql';
 import { Feed_query$key } from './__generated__/Feed_query.graphql';
-
 
 export const fadeDown = keyframes`
 0% {
@@ -43,7 +41,6 @@ const Card = styled.div`
 type Props = {
   query: any
 };
-const MIN_POSTS = 5
 const Feed: React.FC<Props> = ({query}: Props) => {
   const {data, loadNext, isLoadingNext, hasNext, refetch} = usePaginationFragment<FeedPaginationQuery, Feed_query$key>(
     graphql`
@@ -86,7 +83,7 @@ const Feed: React.FC<Props> = ({query}: Props) => {
       style={{marginTop: 30}}
       loadMore={loadMore}
       hasMore={hasNext}
-      loader={<LoadingApp />}
+      loader={<Loading />}
     >
     {edges?.map(({node}:any, index) => {
       return (
