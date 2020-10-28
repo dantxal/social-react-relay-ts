@@ -4,12 +4,12 @@ import logo from './assets/logo.svg';
 
 const FakeTextarea = styled.div`
   border-radius: 3px;
-      width: 100%;
-      background-color: #e5e5e5;
+  width: 100%;
+  background-color: #e5e5e5;
 `
 const SLogo = styled.img`
-margin-top: 60px;
-width: 140px;
+  margin-top: 60px;
+  width: 140px;
 `
 const SContainer = styled.div`
   background-color: #e5e5e5;
@@ -51,7 +51,7 @@ const FakeForm = styled.div`
       .textInput {
         display: flex;
         flex: 1;
-        height: 100px;
+        height: 488px;
         min-height: 100px;
       }
 
