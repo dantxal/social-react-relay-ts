@@ -51,8 +51,7 @@ const FakeForm = styled.div`
       .textInput {
         display: flex;
         flex: 1;
-        height: 488px;
-        min-height: 100px;
+        height: 100px;
       }
 
       .buttonsContainer {
