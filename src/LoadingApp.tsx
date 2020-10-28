@@ -5,7 +5,7 @@ import logo from './assets/logo.svg';
 const FakeTextarea = styled.div`
   border-radius: 3px;
       width: 100%;
-      background-color: #edeff3;
+      background-color: #e5e5e5;
 `
 const SLogo = styled.img`
 margin-top: 60px;
@@ -39,7 +39,7 @@ const FakeForm = styled.div`
     .titleInput {
       border-radius: 3px;
       width: 100%;
-      background-color: #edeff3;
+      background-color: #e5e5e5;
       height: 46px;
     }
     .textInputContainer {
@@ -90,10 +90,10 @@ const SFakePost = styled.div`
       > h3 {
         width: 100px;
         height: 18px;
-        background-color: #edeff3;
-      }
+        background-color: #e5e5e5;
+      }i
       > p {
-        background-color: #edeff3;
+        background-color: #e5e5e5;
         width: 50px;
         height: 12px;
         margin: 0;
@@ -105,7 +105,7 @@ const SFakePost = styled.div`
       height: 20px;
       width: 20px;
       border-radius: 3px;
-      background-color: #edeff3;
+      background-color: #e5e5e5;
     }
 
     button + button {
@@ -118,7 +118,7 @@ const SFakePost = styled.div`
     height: 16px;
     width: 100%;
     border-radius: 3px;
-    background-color: #edeff3;
+    background-color: #e5e5e5;
     & + p {
       margin-top: 8px;
     }
