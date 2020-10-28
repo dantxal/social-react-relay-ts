@@ -140,7 +140,7 @@ const Post:React.FC<Props> = ({ post, refetchPosts, postsLength }:Props) => {
   })
   const [isEditing, setIsEditing] = useState(false)
 
-  const [startTransition] = useTransition({timeoutMs: 200})
+  const [startTransition] = useTransition()
   const [deletePost] = useMutation(DeletePost);
   const postResponse = useFragment<Post_post$key>(graphql`
     fragment Post_post on PostType {
