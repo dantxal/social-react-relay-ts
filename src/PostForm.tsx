@@ -131,9 +131,6 @@ const PostForm: React.FC<Props> = ({refetchPosts}:Props) => {
             }
           }
         },
-        // onCompleted: () => {
-        //   refetchPosts({first: 10})
-        // }
       });
       setFormData({text: '', title: ''})
     })
