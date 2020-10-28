@@ -118,6 +118,19 @@ const PostForm: React.FC<Props> = ({refetchPosts}:Props) => {
             ConnectionHandler.insertEdgeBefore(conn, newEdge);
           }
         },
+        optimisticResponse: {
+          CreatePost: {
+            postEdge: {
+              cursor: "",
+              node: {
+                id: "tempId",
+                title: formData.text,
+                text: formData.title,
+                createdAt: new Date()
+              }
+            }
+          }
+        },
         onCompleted: () => {
           refetchPosts({first: 10})
         }

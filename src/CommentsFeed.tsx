@@ -8,7 +8,9 @@ import { UseMutationConfig } from 'react-relay/lib/relay-experimental/useMutatio
 import { CreateCommentMutation } from './mutations/__generated__/CreateCommentMutation.graphql';
 import { useMutation, usePaginationFragment } from 'react-relay/lib/relay-experimental';
 import { CommentsFeedPaginationQuery } from './__generated__/CommentsFeedPaginationQuery.graphql';
-import {Post_post, Post_post$key} from "./__generated__/Post_post.graphql";
+import { Post_post$key } from "./__generated__/Post_post.graphql";
+import Loading from './Loading';
+
 
 const Comment = styled.div`
   margin-top: 12px;
@@ -17,7 +19,6 @@ const Comment = styled.div`
   border-radius: 10px;
   padding: 8px 12px;
   width: fit-content;
-  
 `
 const Footer = styled.div`
   margin-top: 12px;
@@ -32,6 +33,7 @@ type Props = {
 const CommentsFeed:React.FC<Props> = ({ postQuery, postId}:Props) => {
   const [commitCreateComment] = useMutation(CreateComment);
   const [commentText, setCommentText] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const {data, loadNext, isLoadingNext, hasNext} = usePaginationFragment<CommentsFeedPaginationQuery, Post_post$key>(
     graphql`
       fragment CommentsFeed_query on PostType
@@ -68,8 +70,9 @@ const CommentsFeed:React.FC<Props> = ({ postQuery, postId}:Props) => {
   }, [isLoadingNext, loadNext]);
 
 
-  const handleSubmitComment = (event: React.SyntheticEvent<HTMLTextAreaElement>) => {
+  const handleSubmitComment = async (event: React.SyntheticEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     const configs: UseMutationConfig<CreateCommentMutation> = {
       variables: {
         id: postId,
@@ -88,10 +91,24 @@ const CommentsFeed:React.FC<Props> = ({ postQuery, postId}:Props) => {
         if(conn) {
           ConnectionHandler.insertEdgeBefore(conn, newEdge);
         }
+        
+      },
+      optimisticResponse: {
+        CreateComment: {
+          commentEdge: {
+            cursor: "",
+            node: {
+              id: "tempId",
+              text: commentText,
+              createdAt: new Date()
+            }
+          }
+        }
       },
     }
 
-    commitCreateComment(configs)
+    await commitCreateComment(configs)
+    setIsLoading(false);
     setCommentText('');
   }
 
@@ -111,12 +128,16 @@ const CommentsFeed:React.FC<Props> = ({ postQuery, postId}:Props) => {
       onChange={(e) => setCommentText(e?.target.value)}
       />
 
-      {commentsNodes.map((comment:any) =>(
-        <Comment key={comment.id}>
-          {comment.node.text}
-        </Comment>
-      ))}
+      {isLoading && <Loading style={{marginTop: 10}} />}
 
+      <div>
+        {commentsNodes.map((comment:any) =>(
+          <Comment key={comment.id}>
+            {comment.node.text}
+          </Comment>
+        ))}
+      </div>
+      
       {hasNext && (
       <Footer>
         <button onClick={loadMore}>

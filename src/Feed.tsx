@@ -6,7 +6,7 @@ import { usePaginationFragment } from 'react-relay/hooks';
 
 import PostForm from './PostForm';
 import Post from './Post'
-import Loading from './Loading'
+import LoadingApp from './LoadingApp'
 
 
 import { FeedPaginationQuery } from './__generated__/FeedPaginationQuery.graphql';
@@ -86,7 +86,7 @@ const Feed: React.FC<Props> = ({query}: Props) => {
       style={{marginTop: 30}}
       loadMore={loadMore}
       hasMore={hasNext}
-      loader={<Loading />}
+      loader={<LoadingApp />}
     >
     {edges?.map(({node}:any, index) => {
       return (
