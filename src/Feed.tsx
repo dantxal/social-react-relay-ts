@@ -24,7 +24,6 @@ const Wrapper = styled.div`
   width: 600px;
   margin-top: 25px;
   padding-bottom: 20px;
-  height: 100%;
 
   > div:last-child {
     animation: ${fadeDown} 0.5s cubic-bezier(0.65, 0.05, 0.36, 1);
@@ -67,36 +66,36 @@ const Feed: React.FC<Props> = ({query}: Props) => {
       }
     `, query
   )
-  const loadMore = useCallback(() => {
-    console.log("Load more");
-    
+  const loadMore = () => {
     // Don't fetch again if we're already loading the next page
     if (isLoadingNext) {
       return;
     }
     loadNext(5);
-  }, [isLoadingNext, loadNext]);
+  };
   const edges = data?.posts?.edges || [];
 
   return (
     <Wrapper>
-        <Card>
-          <PostForm refetchPosts={refetch} />
+      <Card>
+        <PostForm refetchPosts={refetch} />
+      </Card>
+      <InfiniteScroll
+        style={{marginTop: 30}}
+        loadMore={() => loadMore()}
+        hasMore={hasNext}
+        loader={<Loading key="loading" />}
+        useWindow={false}
+        getScrollParent={()=>document.getElementById('appScrollable')}
+      >
+      {edges?.map(({node}:any, index) => {
+        return (
+        <Card key={`${node.id}`}>
+          <Post post={node} refetchPosts={refetch} postsLength={edges.length || 0}/>
         </Card>
-          <InfiniteScroll
-          style={{marginTop: 30}}
-          loadMore={loadMore}
-          hasMore={hasNext}
-          loader={<Loading key="loading" />}
-        >
-        {edges?.map(({node}:any, index) => {
-          return (
-          <Card key={`${node.id}`}>
-            <Post post={node} refetchPosts={refetch} postsLength={edges.length || 0}/>
-          </Card>
-          )}
         )}
-        </InfiniteScroll>
+      )}
+      </InfiniteScroll>
     </Wrapper>
   );
 }

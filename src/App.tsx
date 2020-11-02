@@ -39,7 +39,8 @@ const App = () => {
     }
    
   `
-  const query = useLazyLoadQuery<AppQuery>(
+
+const query = useLazyLoadQuery<AppQuery>(
     graphql`
       query AppQuery {
         ...Feed_query
@@ -51,9 +52,9 @@ const App = () => {
   return (
     <SContainer className="App">
       <PerfectScrollbar 
-        className="perfectScrollBar"
-        options={{ suppressScrollX: true }}
-        style={{ height: "100%" }}
+      component="div" 
+      className="perfectScrollBar"
+      id="appScrollable"
       >
           <SLogo src={logo} />
           <Feed query={query}/>
