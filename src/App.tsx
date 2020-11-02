@@ -16,7 +16,7 @@ import LoadingApp from './LoadingApp';
 
 const App = () => {
   const SLogo = styled.img`
-    margin-top: 60px;
+    margin-top: 20px;
     width: 140px;
   `
   const SContainer = styled.div`

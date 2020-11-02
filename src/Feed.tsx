@@ -21,6 +21,7 @@ export const fadeDown = keyframes`
 `
 
 const Wrapper = styled.div`
+  max-width: 90%;
   width: 600px;
   margin-top: 25px;
   padding-bottom: 20px;
