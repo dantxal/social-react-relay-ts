@@ -61,6 +61,7 @@ const FakeForm = styled.div`
         justify-content: center;
 
         button {
+          border: 0;
           height: 48px;
           width: 48px;
           margin-left: 20px;
@@ -76,7 +77,7 @@ const FakeForm = styled.div`
 `
 const SFakePost = styled.div`
   width: 100%;
-  header {
+  .header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -86,7 +87,7 @@ const SFakePost = styled.div`
       flex-direction: row;
       align-items: center;
 
-      > h3 {
+      > .title {
         width: 100px;
         height: 18px;
         background-color: #e5e5e5;
@@ -101,6 +102,7 @@ const SFakePost = styled.div`
     }
 
     button {
+      border: 0;
       height: 20px;
       width: 20px;
       border-radius: 3px;
@@ -147,16 +149,16 @@ const SFakePost = styled.div`
 const FakePost = () => (
   <Card>
     <SFakePost>
-      <header>
-      <div>
-        <h3 />
-        <p />
+      <div className="header">
+        <div>
+          <div className="title"></div>
+          <p />
+        </div>
+        <div>
+          <button />
+          <button />
+        </div>
       </div>
-      <div>
-        <button />
-        <button />
-      </div>
-      </header>
 
       <p />
       <p />
