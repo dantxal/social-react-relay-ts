@@ -170,7 +170,7 @@ const Post:React.FC<Props> = ({ post, refetchPosts, postsLength }:Props) => {
     if(postsLength < 5) {
       refetchPosts({first: postsLength + 1})
     }
-  }, [deletePost, postNode.id, startTransition])
+  }, [deletePost, postNode.id, startTransition, postsLength, refetchPosts])
 
   const handleStartEdit = useCallback(() => {
     setFormData({
