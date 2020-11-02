@@ -68,11 +68,13 @@ const Feed: React.FC<Props> = ({query}: Props) => {
     `, query
   )
   const loadMore = useCallback(() => {
+    console.log("Load more");
+    
     // Don't fetch again if we're already loading the next page
     if (isLoadingNext) {
       return;
     }
-    loadNext(2);
+    loadNext(5);
   }, [isLoadingNext, loadNext]);
   const edges = data?.posts?.edges || [];
 
@@ -85,11 +87,11 @@ const Feed: React.FC<Props> = ({query}: Props) => {
           style={{marginTop: 30}}
           loadMore={loadMore}
           hasMore={hasNext}
-          loader={<Loading />}
+          loader={<Loading key="loading" />}
         >
         {edges?.map(({node}:any, index) => {
           return (
-          <Card key={`${node.id}${index}`}>
+          <Card key={`${node.id}`}>
             <Post post={node} refetchPosts={refetch} postsLength={edges.length || 0}/>
           </Card>
           )}

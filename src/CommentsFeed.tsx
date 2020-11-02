@@ -114,7 +114,6 @@ const CommentsFeed:React.FC<Props> = ({ postQuery, postId}:Props) => {
 
   const commentsNodes = data.comments?.edges || []
 
-
   return (
     <>
       <StyledTextarea 
@@ -131,9 +130,9 @@ const CommentsFeed:React.FC<Props> = ({ postQuery, postId}:Props) => {
       {isLoading && <Loading style={{marginTop: 10}} />}
 
       <div>
-        {commentsNodes.map((comment:any) =>(
-          <Comment key={comment.id}>
-            {comment.node.text}
+        {commentsNodes.map(({node}:any) =>(
+          <Comment key={`${node.id}`}>
+            {node.text}
           </Comment>
         ))}
       </div>
