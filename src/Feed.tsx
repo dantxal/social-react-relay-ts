@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import styled, {keyframes} from 'styled-components';
+import styled, {css, keyframes} from 'styled-components';
 import InfiniteScroll from 'react-infinite-scroller';
 import graphql from 'babel-plugin-relay/macro';
 import { usePaginationFragment } from 'react-relay/hooks';
@@ -20,11 +20,12 @@ export const fadeDown = keyframes`
 }
 `
 
-const Wrapper= styled.div`
+const Wrapper = styled.div`
   width: 600px;
   margin-top: 25px;
   padding-bottom: 20px;
   height: 100%;
+
   > div:last-child {
     animation: ${fadeDown} 0.5s cubic-bezier(0.65, 0.05, 0.36, 1);
   }
@@ -75,25 +76,27 @@ const Feed: React.FC<Props> = ({query}: Props) => {
   }, [isLoadingNext, loadNext]);
   const edges = data?.posts?.edges || [];
 
-  return <Wrapper>
-    <Card>
-      <PostForm refetchPosts={refetch} />
-    </Card>
-      <InfiniteScroll
-      style={{marginTop: 30}}
-      loadMore={loadMore}
-      hasMore={hasNext}
-      loader={<Loading />}
-    >
-    {edges?.map(({node}:any, index) => {
-      return (
-      <Card key={`${node.id}${index}`}>
-        <Post post={node} refetchPosts={refetch} postsLength={edges.length || 0}/>
-      </Card>
-      )}
-    )}
-    </InfiniteScroll>
-  </Wrapper>
+  return (
+    <Wrapper>
+        <Card>
+          <PostForm refetchPosts={refetch} />
+        </Card>
+          <InfiniteScroll
+          style={{marginTop: 30}}
+          loadMore={loadMore}
+          hasMore={hasNext}
+          loader={<Loading />}
+        >
+        {edges?.map(({node}:any, index) => {
+          return (
+          <Card key={`${node.id}${index}`}>
+            <Post post={node} refetchPosts={refetch} postsLength={edges.length || 0}/>
+          </Card>
+          )}
+        )}
+        </InfiniteScroll>
+    </Wrapper>
+  );
 }
 
 export default Feed;

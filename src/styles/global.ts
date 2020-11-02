@@ -7,23 +7,27 @@ export default createGlobalStyle`
   padding: 0;
   outline: 0;
   box-sizing: border-box;
-  ::-webkit-scrollbar {
-  display: none;
-}
 }
 
 *:focus {
   outline: 0
 }
 
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
 html, body, #root {
-  min-height: 100vh !important;
+  height: 100%;
   font: 14px 'Poppins', sans-serif;
 }
 
 body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased !important;
+  position: relative;
+  overflow: hidden;
   body, input, button {
     font: 14px 'Poppins', sans-serif;
   }

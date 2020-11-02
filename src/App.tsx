@@ -1,5 +1,7 @@
 import React, {Suspense} from 'react';
 import {  RelayEnvironmentProvider, useLazyLoadQuery } from 'react-relay/hooks';
+import PerfectScrollbar from 'react-perfect-scrollbar'
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import logo from './assets/logo.svg';
 import graphql from 'babel-plugin-relay/macro';
@@ -18,14 +20,23 @@ const App = () => {
     width: 140px;
   `
   const SContainer = styled.div`
-    background-color: #e5e5e5;
-    padding: 20px;
-    width: 100%;
-    min-height: 100vh;;
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-     
+    position:relative;
+    overflow: hidden;
+    height: 100%;
+
+    .perfectScrollBar {
+      position: relative;
+      overflow:hidden !important;
+      height:100%;
+      background-color: #e5e5e5;
+      padding: 20px;
+      width: 100%;
+      min-height: 100vh;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+    }
    
   `
   const query = useLazyLoadQuery<AppQuery>(
@@ -39,8 +50,14 @@ const App = () => {
 
   return (
     <SContainer className="App">
+      <PerfectScrollbar 
+        className="perfectScrollBar"
+        options={{ suppressScrollX: true }}
+        style={{ height: "100%" }}
+      >
           <SLogo src={logo} />
           <Feed query={query}/>
+      </PerfectScrollbar>
     </SContainer>
   );
 }

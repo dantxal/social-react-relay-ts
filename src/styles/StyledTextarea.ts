@@ -10,5 +10,4 @@ export default styled.textarea`
     color: #B1B6BE;
   }
   min-height: fit-content;
-  overflow: auto;
 `
