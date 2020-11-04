@@ -23,6 +23,7 @@ const SContainer = styled.div`
 
 const Wrapper= styled.div`
   width: 600px;
+  max-width: 90%;
   margin-top: 25px;
   padding-bottom: 20px;
   height: 100%;
